@@ -35,6 +35,31 @@ def gerar_relatorio():
     print("Média de valor por categoria:")
     print(media_valor_categoria)
 
+def top_produtos():
+    conexao = sqlite3.connect("empresa.db")
+    df = pd.read_sql_query("SELECT * FROM vendas", conexao)
+    conexao.close()
+
+    top_produtos = df[df['valor'] > df['valor'].mean()]
+    print("Top produtos:")
+    print(top_produtos)
+
+def save_electronicos():
+    conexao = sqlite3.connect("empresa.db")
+    df = pd.read_sql_query("SELECT * FROM vendas WHERE categoria = 'Eletrônicos'", conexao)
+    conexao.close()
+    df.to_csv("eletronicos.csv", index=False)
+
+import matplotlib.pyplot as plt
+def grafico_vendas():
+    conexao = sqlite3.connect("empresa.db")
+    df = pd.read_sql_query("SELECT * FROM vendas", conexao)
+    conexao.close()
+    media_valor_categoria = df.groupby('categoria')['valor'].mean()
+    media_valor_categoria.plot(kind='bar')
+    plt.title("Média de Valor por Categoria")
+    plt.show()
+
 if __name__ == "__main__":
     venda1 = Venda("Notebook", "Eletrônicos", 3500.00)
     venda2 = Venda("Cadeira", "Móveis", 450.00)
@@ -43,3 +68,6 @@ if __name__ == "__main__":
     save_venda(venda2)
     
     gerar_relatorio()
+    top_produtos()
+    save_electronicos()
+    grafico_vendas()
