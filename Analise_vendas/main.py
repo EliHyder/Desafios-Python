@@ -60,6 +60,17 @@ def grafico_vendas():
     plt.title("Média de Valor por Categoria")
     plt.show()
 
+def limpar_e_analisar():
+    conexao = sqlite3.connect("empresa.db")
+    df = pd.read_sql_query("SELECT * FROM vendas", conexao)
+    conexao.close()
+    df.dropna(inplace=True)
+    df.drop_duplicates(inplace=True)
+    df["lucro"] = df["valor"] * 0.25
+    produto_maior_lucro = df.loc[df["lucro"].idxmax()]
+    print("produto com maior lucro:")
+    print(produto_maior_lucro)
+
 if __name__ == "__main__":
     venda1 = Venda("Notebook", "Eletrônicos", 3500.00)
     venda2 = Venda("Cadeira", "Móveis", 450.00)
