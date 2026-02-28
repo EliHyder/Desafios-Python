@@ -71,9 +71,26 @@ def limpar_e_analisar():
     print("produto com maior lucro:")
     print(produto_maior_lucro)
 
+import random
+def correlacao():
+    conexao = sqlite3.connect("empresa.db")
+    df = pd.read_sql_query("SELECT * FROM vendas", conexao)
+    conexao.close()
+    df["desconto_aplicado"] = [random.uniform(0, 30) for _ in range(len(df))]
+    correlacao = df["valor"].corr(df["desconto_aplicado"])
+    print(f"Correlação entre valor e desconto aplicado: {correlacao:.2f}")
+    if correlacao > 0:
+        print("Correlação positiva: à medida que o valor aumenta, o desconto aplicado tende a aumentar.")
+    elif correlacao < 0:
+        print("Correlação negativa: à medida que o valor aumenta, o desconto aplicado tende a diminuir.")
+    else:
+        print("Nenhuma correlação: o valor e o desconto aplicado não têm relação linear.")
+
+    print(df.describe())
+
 if __name__ == "__main__":
-    venda1 = Venda("Notebook", "Eletrônicos", 3500.00)
-    venda2 = Venda("Cadeira", "Móveis", 450.00)
+    venda1 = Venda("Notebook", "Eletrônicos", random.uniform(1000, 3000))
+    venda2 = Venda("Cadeira", "Móveis", random.uniform(200, 500))
     
     save_venda(venda1)
     save_venda(venda2)
@@ -82,3 +99,5 @@ if __name__ == "__main__":
     top_produtos()
     save_electronicos()
     grafico_vendas()
+    limpar_e_analisar()
+    correlacao()
